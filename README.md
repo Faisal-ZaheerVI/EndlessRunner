@@ -1,5 +1,5 @@
 # EndlessRunner
-To do list:
+To do list:<br>
 PRIORITY<br>
 -create multiple platform<br>
   -> spawns randomly<br>
