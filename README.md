@@ -10,3 +10,5 @@ PRIORITY<br>
 NOT PRIORITY RIGHT NOW<br>
 -endless background design<br>
 -player design<br>
+<br>
+https://www.khanacademy.org/computer-programming/a/5944077252165632
