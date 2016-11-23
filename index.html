@@ -12,41 +12,6 @@
     <body onload="startGame()">
         <script>
             
-            var myGamePiece;
-            
-            var platform1;
-            
-            var Platform = function (x, y, height, width, color) {
-                this.x = x;
-                this.y = y;
-                this.color = color;
-                this.height = height;
-                this.width = width;
-                // Different X speeds - can change
-                this.dx = -2;
-                
-                this.move = function () {
-                    if (this.x + this.width < 0) {
-                         platform1 = new Platform(500, 250, 50, 120, "green");
-                    }
-                    else this.x += this.dx;
-                };
-                
-                this.update = function() {
-                    ctx = myGameArea.context;
-                    ctx.fillStyle = color;
-                    ctx.fillRect(this.x, this.y, this.width, this.height);
-                }
-
-            };
-
-            function startGame() {
-                myGameArea.start();
-                myGamePiece = new Player(30, 30, "red", 10, 120);
-                platform1 = new Platform(500, 250, 50, 120, "green");
-                console.log(platform1);
-            }
-
             // Creates Game Canvas with properties
             var myGameArea = {
                 canvas : document.createElement("canvas"),
@@ -55,6 +20,7 @@
                     this.canvas.height = 270;
                     this.context = this.canvas.getContext("2d");
                     document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+                    this.frameNo = 0;
                     this.interval = setInterval(updateGameArea, 20);
                     // Keys arrays for multiple keys pressed
                     // Diagonal moving features
@@ -70,6 +36,65 @@
                 clear : function(){
                     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 }
+            }
+            
+            // Global variables
+            var myGamePiece;
+            
+            var platform1;
+            
+            var platforms = [];
+            
+            var ROCK_BOTTOM = myGameArea.canvas.height;
+            
+            var GRID_SIZE = 10;
+            var PLATFORM_HEIGHT = 150;
+            var PLATFORM_WIDTH = 400;
+            var INIT_X = ;
+            var INIT_Y = ;
+            
+            var NUM_PLARFORMS = 3;
+            var 
+            
+            
+            
+            // Objects
+            var Platform = function (x, y, height, width, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.height = height;
+                this.width = width;
+                // Different X speeds - can change
+                this.dx = -2;
+                
+                this.move = function () {
+                    // Check if platform went over edge
+                    if (this.x + this.width < 0) {
+                        // TO DO function initializing platforms
+                        platform1 = new Platform(500, 250, 25, 120, "green");
+                    }
+                    else this.x += this.dx;
+                };
+                
+                this.update = function() {
+                    ctx = myGameArea.context;
+                    ctx.fillStyle = color;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+
+            };
+
+            function startGame() {
+                myGameArea.start();
+                myGamePiece = new Player(30, 30, "red", 10, 120);
+                platform1 = new Platform(200, 200, 25, 120, "green");
+                console.log(platform1);
+            }
+            
+            function everyinterval(n) {
+                if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+                return false;
             }
 
             // Creates square with properties
@@ -103,8 +128,28 @@
                     }
                 }
             }
-
+            
+            // Called multiple times
             function updateGameArea() {
+                var x, y;
+                for (i = 0; i < platforms.length; i += 1) {
+                    if (myGamePiece.crashWith(platform1[i])) {
+                        myGameArea.stop();
+                        return;
+                    } 
+                }
+                myGameArea.clear();
+                myGameArea.frameNo += 1;
+                if (myGameArea.frameNo == 1 || everyinterval(150)) {
+                    x = myGameArea.canvas.width;
+                    y = myGameArea.canvas.height - 200
+                    //todo
+                    //platform1.push(new Player(10, 200, "green", x, y));
+                }
+                for (i = 0; i < platforms.length; i++) {
+                    platform1[i].x += -1;
+                    platform1[i].update();
+                }
                 // Clears screen of previous frames continously 
                 myGameArea.clear();
                 // Speed without pressing keys
@@ -122,9 +167,31 @@
                 myGamePiece.update();
                 platform1.move();
                 platform1.update();
+                collision();
                 
                 
             }
+            
+            function collision () {
+                if (myGamePiece.x + myGamePiece.width >= platform1.x + platform1.width &&
+                    
+                    myGamePiece.y <= platform1.y) {
+                    console.log ("Hello world");
+                    // clearInterval(myGameArea.interval);
+                    
+                
+                }
+            }
+            
+//            function collision () {
+                if (myGamePiece.x + myGamePiece.width >= platform1.x + platform1.width && 
+                    myGamePiece.y <= platform1.y) {
+                    console.log ("Hello world");
+                    // clearInterval(myGameArea.interval);
+                    
+                
+                }
+                        
         </script>
         <p>Endless Runner Test</p>
     </body>
