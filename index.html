@@ -37,6 +37,8 @@
                     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 }
             }
+
+            myGameArea.start(); // canvas not created until this function is called            
             
             // Global variables
             var myGamePiece;
@@ -48,10 +50,11 @@
             var ROCK_BOTTOM = myGameArea.canvas.height;
             
             var GRID_SIZE = 10;
-            var PLATFORM_HEIGHT = 50;
+            var PLATFORM_HEIGHT = 10;
             var PLATFORM_WIDTH = 100;
-            //var INIT_X = myGameArea.canvas.width;
-            //var INIT_Y = myGameArea.canvas.height;
+            var PLATFORM_SPEED = 3;
+            var INIT_X = myGameArea.canvas.width;
+            var INIT_Y = myGameArea.canvas.height - PLATFORM_HEIGHT;
             
             //var NUM_PLATFORMS = 3;
             
@@ -65,13 +68,13 @@
                 this.height = height;
                 this.width = width;
                 // Different X speeds - can change
-                this.dx = -2;
+                this.dx = -PLATFORM_SPEED;
                 
                 this.move = function () {
-                    // Check if platform went over edge
+                
+                    // Check if platform went over left side of screen
                     if (this.x + this.width < 0) {
-                        // TO DO function initializing platforms
-                        //platform1 = new Platform(500, 250, 25, 120, "green");
+                        makeNewPlatform();
                     }
                     else this.x += this.dx;
                 };
@@ -85,11 +88,12 @@
             };
 
             function startGame() {
-                myGameArea.start();
+
                 myGamePiece = new Player(30, 30, "red", 10, 120);
-                platform1 = new Platform(myGameArea.canvas.width,
-                       myGameArea.canvas.height - PLATFORM_HEIGHT, 
-                       PLATFORM_WIDTH, PLATFORM_HEIGHT, "green");
+                
+                makeNewPlatform();
+                
+                // debug:
                 console.log(myGameArea.canvas.width + " " + myGameArea.canvas.height);
                 console.log(platform1);
             }
@@ -98,15 +102,21 @@
                 if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
                 return false;
             }
+            
+            // generates a new Platform
+            function makeNewPlatform(height) {
+                platform1 = new Platform(INIT_X, INIT_Y, 
+                PLATFORM_WIDTH, PLATFORM_HEIGHT, "green");
+            }
 
             // Creates square with properties
             function Player(width, height, color, x, y, type) {
                 this.jumping = false;
-                this.gamearea = myGameArea;
+                //this.gamearea = myGameArea;
                 this.type = type;
                 this.width = width;
                 this.height = height;
-                this.speedX = 0;
+                //this.speedX = 0;
                 this.speedY = 0;
                 this.gravity = 7;
                 this.x = x;
@@ -118,14 +128,21 @@
                 }
                 this.newPos = function() {
                     this.speedY += this.gravity;
-                    this.x += this.speedX;
+                    //this.x += this.speedX;
                     this.y += this.speedY;
-                    this.hitBottom();
+                    this.collisionDetect();
                 }
-                this.hitBottom = function() {
-                    var rockbottom = myGameArea.canvas.height - this.height;
-                    if (this.y > rockbottom) {
-                        this.y = rockbottom;
+                this.collisionDetect = function() {
+                    // check for platform contact
+                    if (myGamePiece.x + myGamePiece.width >= platform1.x && 
+                        myGamePiece.y + myGamePiece.height >= platform1.y) {                    
+                        this.y = platform1.y - this.height;
+                        myGamePiece.jumping = false;
+                    }
+                    
+                    // check for bottom of screen
+                    if (this.y > myGameArea.canvas.height - this.height) {
+                        this.y = myGameArea.canvas.height - this.height;
                         myGamePiece.jumping = false;
                     }
                 }
@@ -133,7 +150,9 @@
             
             // Called multiple times
             function updateGameArea() {
+                /*
                 var x, y;
+                
                 for (i = 0; i < platforms.length; i += 1) {
                     if (myGamePiece.crashWith(platform1[i])) {
                         myGameArea.stop();
@@ -152,48 +171,33 @@
                     platform1[i].x += -1;
                     platform1[i].update();
                 }
+                */
+                
                 // Clears screen of previous frames continously 
                 myGameArea.clear();
+
                 // Speed without pressing keys
                 myGamePiece.speedX = 0;
                 myGamePiece.speedY = 0;
+
                 // Keyboard controls: Left, Up, Right, Down
                 // if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -1;}
                 // if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 1; }
+
                 if (myGameArea.keys && myGameArea.keys[38] && !myGamePiece.jumping) {
                         myGamePiece.speedY = -100;
                         myGamePiece.jumping = true;
                 }
                 if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 1; }
+                
                 myGamePiece.newPos();
                 myGamePiece.update();
+                
                 platform1.move();
                 platform1.update();
-                collision();
-                
-                
+                myGamePiece.collisionDetect();
             }
             
-            function collision () {
-                if (myGamePiece.x + myGamePiece.width >= platform1.x + platform1.width &&
-                    
-                    myGamePiece.y <= platform1.y) {
-                    console.log ("Hello world");
-                    // clearInterval(myGameArea.interval);
-                    
-                
-                }
-            }
-            
-            function collision () {
-                if (myGamePiece.x + myGamePiece.width >= platform1.x + platform1.width && 
-                    myGamePiece.y <= platform1.y) {
-                    console.log ("Hello world");
-                    // clearInterval(myGameArea.interval);
-                    
-                
-                }
-            }
             
         </script>
         <p>Endless Runner Test</p>
