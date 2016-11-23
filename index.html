@@ -48,13 +48,12 @@
             var ROCK_BOTTOM = myGameArea.canvas.height;
             
             var GRID_SIZE = 10;
-            var PLATFORM_HEIGHT = 150;
-            var PLATFORM_WIDTH = 400;
-            var INIT_X = ;
-            var INIT_Y = ;
+            var PLATFORM_HEIGHT = 50;
+            var PLATFORM_WIDTH = 100;
+            //var INIT_X = myGameArea.canvas.width;
+            //var INIT_Y = myGameArea.canvas.height;
             
-            var NUM_PLARFORMS = 3;
-            var 
+            //var NUM_PLATFORMS = 3;
             
             
             
@@ -72,7 +71,7 @@
                     // Check if platform went over edge
                     if (this.x + this.width < 0) {
                         // TO DO function initializing platforms
-                        platform1 = new Platform(500, 250, 25, 120, "green");
+                        //platform1 = new Platform(500, 250, 25, 120, "green");
                     }
                     else this.x += this.dx;
                 };
@@ -80,7 +79,7 @@
                 this.update = function() {
                     ctx = myGameArea.context;
                     ctx.fillStyle = color;
-                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                    ctx.fillRect(this.x, this.y, this.height, this.width);
                 }
 
             };
@@ -88,7 +87,10 @@
             function startGame() {
                 myGameArea.start();
                 myGamePiece = new Player(30, 30, "red", 10, 120);
-                platform1 = new Platform(200, 200, 25, 120, "green");
+                platform1 = new Platform(myGameArea.canvas.width,
+                       myGameArea.canvas.height - PLATFORM_HEIGHT, 
+                       PLATFORM_WIDTH, PLATFORM_HEIGHT, "green");
+                console.log(myGameArea.canvas.width + " " + myGameArea.canvas.height);
                 console.log(platform1);
             }
             
