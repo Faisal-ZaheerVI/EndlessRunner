@@ -3,21 +3,22 @@
  * - myGamePiece = player
  */
 
+var paused = false; 
 
 // Creates Game Canvas with properties
 var game = {
     canvas : document.createElement("canvas"),
-    start : function() {
+    start : function () {
         this.canvas.width = 480;
         this.canvas.height = 270;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         //this.frameNo = 0;
         this.interval = setInterval(updateGameArea, 20);
-    }, 
+    },
     
     // Clears canvas
-    clear : function(){
+    clear : function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }; // end Game object
@@ -32,11 +33,14 @@ document.addEventListener("keydown", function (e) {
   if (e.keyCode === 39 || e.keyCode === 68) {
     kbd.right = true;
   }
-  else if (e.keyCode === 38 || e.keyCode === 87) {
+  else if (e.keyCode === 38 || e.keyCode === 87 || e.keyCode === 32) {
     kbd.up = true;
   }
   else if (e.keyCode === 37 || e.keyCode === 65) {
     kbd.left = true;
+  }
+  else if (e.keyCode === 27) {
+       paused = !paused;
   }
 }, false);
 
@@ -56,16 +60,19 @@ var PLATFORM_WIDTH = 100;
 var PLATFORM_SPEED = 3;
 var INIT_X = game.canvas.width;
 var INIT_Y = game.canvas.height - PLATFORM_HEIGHT;
+//var PLAYER_IMG = "imgs/download.png"
 
 //var NUM_PLATFORMS = 3;
 
 // Global variables
 var player;
 var platform1;
+var platform2;
+var platform3;
 var platforms = [];
 
 // Platform class
-var Platform = function (x, y, height, width, color) {
+var Platform = function (x, y, height, width, color) {   
     this.x = x;
     this.y = y;
     this.color = color;
@@ -81,6 +88,11 @@ var Platform = function (x, y, height, width, color) {
         if (this.x + this.width < 0) {
             makeNewPlatform();
         }
+        
+        if (this.x + this.width + this.width < 0) {
+            makeNewPlatformTwo();
+        }
+        
         else this.x += this.dx;
     };
     
@@ -96,20 +108,27 @@ var Platform = function (x, y, height, width, color) {
 // initializes a new game
 function startGame() {
 
+    // width, height, color, x, y
     player = new Player(30, 30, "red", 10, 120);
     
     makeNewPlatform();
+    makeNewPlatformTwo();
     
     // debug:
-    console.log(game.canvas.width + " " + game.canvas.height);
-    console.log(platform1);
+    //console.log(game.canvas.width + " " + game.canvas.height);
+    //console.log(platform1);
 }
 
 // generates a new Platform
-function makeNewPlatform(height) {
-    platform1 = new Platform(INIT_X, INIT_Y, 
-    PLATFORM_HEIGHT, PLATFORM_WIDTH, "green");
-}
+function makeNewPlatform (height) {
+    // x, y, height, width, color
+    platform1 = new Platform(INIT_X, INIT_Y, PLATFORM_HEIGHT, PLATFORM_WIDTH, "green");
+};
+
+function makeNewPlatformTwo (height) {
+    // x, y, height, width, color
+    platform2 = new Platform(INIT_X + 130, INIT_Y - 50, PLATFORM_HEIGHT, PLATFORM_WIDTH, "brown");
+};
 
 // Player class
 function Player(width, height, color, x, y) {
@@ -177,6 +196,13 @@ function Player(width, height, color, x, y) {
             this.y = game.canvas.height - this.height;
             this.landed = true;
         }
+        
+        else if (this.x + this.width >= platform2.x && 
+            this.y + this.height >= platform2.y) {                    
+            this.y = platform2.y - this.height;
+            this.landed = true;
+        }
+        
         else {
             this.landed = false;
         }
@@ -218,8 +244,14 @@ function updateGameArea() {
     // Move stuff
     player.move();
     platform1.move();
+    platform2.move();
 
     // Draw images
     player.update();
     platform1.update();
+    platform2.update();
+    
+    if (paused) {
+        return;
+    }
 }
