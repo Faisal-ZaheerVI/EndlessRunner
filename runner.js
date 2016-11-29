@@ -60,6 +60,7 @@ var PLATFORM_WIDTH = 100;
 var PLATFORM_SPEED = 3;
 var INIT_X = game.canvas.width;
 var INIT_Y = game.canvas.height - PLATFORM_HEIGHT;
+var i = 0;
 //var PLAYER_IMG = "imgs/download.png"
 
 //var NUM_PLATFORMS = 3;
@@ -89,11 +90,16 @@ var Platform = function (x, y, height, width, color) {
             makeNewPlatform();
         }
         
-        if (this.x + this.width + this.width < 0) {
+        if (this.x + 2 * this.width < 0) {
             makeNewPlatformTwo();
         }
         
+        if (this.x + 3 * this.width < 0) {
+            makeNewPlatformThree();
+        }
+        
         else this.x += this.dx;
+
     };
     
     // redraws the Platform to the screen
@@ -113,6 +119,7 @@ function startGame() {
     
     makeNewPlatform();
     makeNewPlatformTwo();
+    makeNewPlatformThree();
     
     // debug:
     //console.log(game.canvas.width + " " + game.canvas.height);
@@ -127,7 +134,12 @@ function makeNewPlatform (height) {
 
 function makeNewPlatformTwo (height) {
     // x, y, height, width, color
-    platform2 = new Platform(INIT_X + 130, INIT_Y - 50, PLATFORM_HEIGHT, PLATFORM_WIDTH, "brown");
+    platform2 = new Platform(INIT_X + 230, INIT_Y - 50, PLATFORM_HEIGHT, PLATFORM_WIDTH, "brown");
+};
+
+function makeNewPlatformThree (height) {
+    // x, y, height, width, color
+    platform3 = new Platform(INIT_X + 430, INIT_Y, PLATFORM_HEIGHT, PLATFORM_WIDTH, "blue");
 };
 
 // Player class
@@ -191,15 +203,21 @@ function Player(width, height, color, x, y) {
             this.landed = true;
         }
         
-        // check for colliding with bottom of screen
-        else if (this.y >= game.canvas.height - this.height) {
-            this.y = game.canvas.height - this.height;
+        if (this.x + this.width >= platform2.x && 
+            this.y + this.height >= platform2.y) {                    
+            this.y = platform2.y - this.height;
             this.landed = true;
         }
         
-        else if (this.x + this.width >= platform2.x && 
-            this.y + this.height >= platform2.y) {                    
-            this.y = platform2.y - this.height;
+        if (this.x + this.width >= platform3.x && 
+            this.y + this.height >= platform3.y) {                    
+            this.y = platform3.y - this.height;
+            this.landed = true;
+        }
+        
+        // check for colliding with bottom of screen
+        if (this.y >= game.canvas.height - this.height) {
+            this.y = game.canvas.height - this.height;
             this.landed = true;
         }
         
@@ -245,11 +263,13 @@ function updateGameArea() {
     player.move();
     platform1.move();
     platform2.move();
+    platform3.move();
 
     // Draw images
     player.update();
     platform1.update();
     platform2.update();
+    platform3.update();
     
     if (paused) {
         return;
