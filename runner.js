@@ -3,8 +3,6 @@
  * - myGamePiece = player
  */
 
-var paused = false; 
-
 // Creates Game Canvas with properties
 var game = {
     canvas : document.createElement("canvas"),
@@ -60,7 +58,6 @@ var PLATFORM_WIDTH = 100;
 var PLATFORM_SPEED = 3;
 var INIT_X = game.canvas.width;
 var INIT_Y = game.canvas.height - PLATFORM_HEIGHT;
-var i = 0;
 //var PLAYER_IMG = "imgs/download.png"
 
 //var NUM_PLATFORMS = 3;
@@ -71,6 +68,7 @@ var platform1;
 var platform2;
 var platform3;
 var platforms = [];
+var count;
 
 // Platform class
 var Platform = function (x, y, height, width, color) {   
@@ -86,15 +84,15 @@ var Platform = function (x, y, height, width, color) {
     this.move = function () {
     
         // Check if platform crossed left side of screen
-        if (this.x + this.width < 0) {
+        if (platform1.x + platform1.width < 0) {
             makeNewPlatform();
         }
         
-        if (this.x + 2 * this.width < 0) {
+        if (platform2.x + platform2.width < 0) {
             makeNewPlatformTwo();
         }
         
-        if (this.x + 3 * this.width < 0) {
+        if (platform3.x + platform3.width < 0) {
             makeNewPlatformThree();
         }
         
@@ -196,27 +194,32 @@ function Player(width, height, color, x, y) {
     // Checks collisions between player and ground/platforms
     this.collisionDetect = function() {
         
+        // this.x >= platform1.x - this.width
+        // this.x <= platform1.x + platform1.width
+        // this.x + this.width >= platform1.x
+        // this.x + this.width <= platform1.x + this.width
+        
         // check for platform contact
-        if (this.x + this.width >= platform1.x && 
-            this.y + this.height >= platform1.y) {                    
+        if (this.x >= platform1.x - this.width
+            && this.x <= platform1.x + platform1.width) {
             this.y = platform1.y - this.height;
             this.landed = true;
         }
         
-        if (this.x + this.width >= platform2.x && 
-            this.y + this.height >= platform2.y) {                    
+        if (this.x >= platform2.x - this.width
+            && this.x <= platform2.x + platform2.width) {
             this.y = platform2.y - this.height;
             this.landed = true;
         }
         
-        if (this.x + this.width >= platform3.x && 
-            this.y + this.height >= platform3.y) {                    
+        if (this.x >= platform3.x - this.width
+            && this.x <= platform3.x + platform3.width) {
             this.y = platform3.y - this.height;
             this.landed = true;
         }
         
         // check for colliding with bottom of screen
-        if (this.y >= game.canvas.height - this.height) {
+        else if (this.y >= game.canvas.height - this.height) {
             this.y = game.canvas.height - this.height;
             this.landed = true;
         }
@@ -270,8 +273,4 @@ function updateGameArea() {
     platform1.update();
     platform2.update();
     platform3.update();
-    
-    if (paused) {
-        return;
-    }
 }
